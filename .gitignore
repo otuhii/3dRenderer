@@ -1,7 +1,5 @@
 # CMake build directories
-build/
-build-debug/
-build-release/
+build
 
 # CMake generated files
 CMakeFiles/
@@ -19,17 +17,3 @@ compile_commands.json
 *.dylib
 *.exe
 *.out
-
-# Debug / profiling
-*.dSYM/
-*.profraw
-*.profdata
-
-# Editor swap/temp files
-*.swp
-*.swo
-*~
-
-# OS junk
-.DS_Store
-Thumbs.db
