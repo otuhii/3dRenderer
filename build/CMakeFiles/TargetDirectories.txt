@@ -1,3 +1,0 @@
-/home/otuhii/dev/3dRenderer/build/CMakeFiles/renderer.dir
-/home/otuhii/dev/3dRenderer/build/CMakeFiles/edit_cache.dir
-/home/otuhii/dev/3dRenderer/build/CMakeFiles/rebuild_cache.dir

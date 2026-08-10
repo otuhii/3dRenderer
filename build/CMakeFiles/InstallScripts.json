@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/otuhii/dev/3dRenderer/build/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
