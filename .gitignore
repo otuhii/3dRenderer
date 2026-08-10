@@ -1,0 +1,35 @@
+# CMake build directories
+build/
+build-debug/
+build-release/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# Compiled files
+*.o
+*.obj
+*.a
+*.so
+*.dll
+*.dylib
+*.exe
+*.out
+
+# Debug / profiling
+*.dSYM/
+*.profraw
+*.profdata
+
+# Editor swap/temp files
+*.swp
+*.swo
+*~
+
+# OS junk
+.DS_Store
+Thumbs.db
