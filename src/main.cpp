@@ -5,9 +5,10 @@
 
 void FrameBufferSizeCallback(GLFWwindow* window, int width, int height); 
 
-void UserInputCallBack(GLFWwindow* window, bool& changeArrayObject);
+void UserInputCallBack(GLFWwindow* window);
 
-void GetShadersReady(uint32_t shaderProgram);
+void GetShadersReady1(uint32_t shaderProgram);
+void GetShadersReady2(uint32_t shaderProgram);
 
 int main()
 {
@@ -81,30 +82,33 @@ int main()
     glEnableVertexAttribArray(0);
 
    
-    uint32_t shaderProgram = glCreateProgram();
-    GetShadersReady(shaderProgram);
+    uint32_t 
+        shaderProgram1{},
+        shaderProgram2{}; 
+
+    shaderProgram1 = glCreateProgram();
+    shaderProgram2 = glCreateProgram();
+
+    GetShadersReady1(shaderProgram1);
+    GetShadersReady2(shaderProgram2);
 
 
     while(!glfwWindowShouldClose(window))
     {
         bool changeArrayBuffer{};
 
-        UserInputCallBack(window, changeArrayBuffer);
+        UserInputCallBack(window);
         
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        glUseProgram(shaderProgram);
-
-        if (changeArrayBuffer)
-        {
-           glBindVertexArray(VAO_2);
-        }
-        else
-        {
-            glBindVertexArray(VAO_1);
-        }
-
+        
+        
+        glUseProgram(shaderProgram1);
+        glBindVertexArray(VAO_1);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        
+        glUseProgram(shaderProgram2);
+        glBindVertexArray(VAO_2);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
@@ -125,22 +129,13 @@ void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 }
 
 
-void UserInputCallBack(GLFWwindow* window, bool& changeArrayObject)
+void UserInputCallBack(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window, 1);
     }
     
-
-    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-    {
-        changeArrayObject = true;
-    }
-    else
-    {
-        changeArrayObject = false;
-    }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
@@ -153,7 +148,7 @@ void UserInputCallBack(GLFWwindow* window, bool& changeArrayObject)
 }
 
 
-void GetShadersReady(uint32_t shaderProgram)
+void GetShadersReady1(uint32_t shaderProgram)
 {
     const char *vertexShaderSource =
         "#version 330 core\n"
@@ -222,4 +217,71 @@ void GetShadersReady(uint32_t shaderProgram)
 }
 
 
+void GetShadersReady2(uint32_t shaderProgram)
+{
+    const char *vertexShaderSource =
+        "#version 330 core\n"
+        "layout (location = 0) in vec3 aPos;\n"
+        "void main()\n"
+        "{\n"
+        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+        "}\0";
+    
+    const char *fragmentShaderSource =
+        "#version 330 core\n"
+        "out vec4 FragColor;\n"
+        "void main()\n"
+        "{\n"
+        "    FragColor = vec4(1.0f, 1.f, 0.0f, 1.0f);\n"
+        "}\n";
+
+    int  success;
+    char infoLog[512];
+
+    uint32_t 
+        vertexShader,
+        fragmentShader;
+
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if(!success)
+    {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
+
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if(!success)
+    {
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);  
+    glLinkProgram(shaderProgram);
+
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if(!success)
+    {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n\n" << infoLog << std::endl;
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+}
 
