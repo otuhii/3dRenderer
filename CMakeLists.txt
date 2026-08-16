@@ -10,6 +10,7 @@ find_package(OpenGL REQUIRED)
 
 add_executable(renderer
     src/main.cpp
+    src/Parser.cpp
     external/glad/src/gl.c
 )
 
