@@ -5,16 +5,11 @@
 
 #include <iostream>
 
-
-
-
-
+#include <math.h>
 
 
 void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
-void UserInputCallBack(GLFWwindow* window);
-
-
+void UserInputCallBack(GLFWwindow* window, float& xOffset, float& yOffset);
 
 
 
@@ -73,36 +68,48 @@ int main()
     char infoLog[512]{};
 
     unsigned int
-        shaderProgram{ glCreateProgram()};
+        shaderProgram1{ glCreateProgram()};
 
-    Parser::ParseAndLinkShader("src/shaders/base.vert", shaderProgram, GL_VERTEX_SHADER);
-    Parser::ParseAndLinkShader("src/shaders/yellow.frag", shaderProgram, GL_FRAGMENT_SHADER);
-    
-    glLinkProgram(shaderProgram);
+
+
+    Parser::ParseAndLinkShader("shaders/base.vert", shaderProgram1, GL_VERTEX_SHADER);
+    Parser::ParseAndLinkShader("shaders/yellow.frag", shaderProgram1, GL_FRAGMENT_SHADER);
+    glLinkProgram(shaderProgram1);
     glGetProgramiv(
-            shaderProgram, 
+            shaderProgram1, 
             GL_LINK_STATUS, 
             &success
         );
     if (!success)
     {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        glGetProgramInfoLog(shaderProgram1, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n\n" << infoLog << std::endl;
     }
-    
 
+
+    float 
+        xOffset{},
+        yOffset{};
+        
 
     while (!glfwWindowShouldClose(window))
     {
         bool 
             changeArrayBuffer{};
 
-        UserInputCallBack(window);
+        UserInputCallBack(window, xOffset, yOffset);
 
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
+
+        glUseProgram(shaderProgram1);
+
+        
+        int positionOffset = glGetUniformLocation(shaderProgram1, "positionOffset");
+        glUniform3f(positionOffset, xOffset, yOffset, 0.0f);
+            
+
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
@@ -111,7 +118,7 @@ int main()
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
+    glDeleteProgram(shaderProgram1);
 
     glfwDestroyWindow(window);
     glfwTerminate();
@@ -127,21 +134,28 @@ void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 
 }
 
-void UserInputCallBack(GLFWwindow* window)
+void UserInputCallBack(GLFWwindow* window, float& xOffset, float& yOffset)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window, 1);
     }
-    
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        yOffset += 0.01f;
     }
-    else
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        yOffset -= 0.01f;
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        xOffset -= 0.01f;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        xOffset += 0.01f;
     }
 }
 
