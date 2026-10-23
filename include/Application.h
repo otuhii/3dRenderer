@@ -8,14 +8,26 @@
 #include <Window.h>
 
 #include <memory>
+#include <glad/gl.h>
 
 class Application {
 public:
-    Application();
+    static Application& GetInstance() {
+        static Application app;
+        return app;
+    }
 
-    ~Application();
+    Application(Application const&) = delete;
+    Application& operator=(Application const&) = delete;
+    Application(Application&&) = delete;
+    Application& operator=(Application&&) = delete;
+
+    void Run();
 
 private:
+    Application();
+    ~Application();
+
     std::unique_ptr<Window> main_window_{};
     //...some other stuff later: renderer, inout handler and all that
 };

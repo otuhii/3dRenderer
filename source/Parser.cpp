@@ -82,6 +82,8 @@ void Parser::split(const std::string &readline, std::vector<std::string> &splitt
 
 Model Parser::ParseObj(std::string const& filepath)
 {
+    //OBJ indices are 1-based, whereas OpenGL element-buffer indices are 0-based
+    //consider that
     if (std::ifstream model_file{filepath}; model_file)
     {
         std::string current_read_line{};
@@ -151,11 +153,11 @@ Model Parser::ParsebObj(std::string const &filepath)
 
         model_file.read(
             reinterpret_cast<char*>(vertices.data()),
-            vertices.size() * sizeof(vertices.front())
+            vertices.size() * sizeof(Face)
         );
         model_file.read(
             reinterpret_cast<char*>(faces.data()),
-            faces.size() * sizeof(vertices.front())
+            faces.size() * sizeof(Vertex)
         );
 
         model_file.close();
@@ -289,12 +291,12 @@ bool Parser::SavebObj(const std::string &filepath, Model const &model)
         std::vector<Face> const& faces_alias{model.GetFaces()};
         output_file.write(
             reinterpret_cast<const char*>(vertices_alias.data()),
-            vertices_alias.size() * sizeof(vertices_alias.front())
+            vertices_alias.size() * sizeof(Vertex)
         );
 
         output_file.write(
             reinterpret_cast<const char*>(faces_alias.data()),
-            faces_alias.size() * sizeof(faces_alias.front())
+            faces_alias.size() * sizeof(Face)
         );
 
 
