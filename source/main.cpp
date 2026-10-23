@@ -1,5 +1,4 @@
 #include <glad/gl.h>
-#include <GLFW/glfw3.h>
 
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/glm.hpp"
@@ -13,24 +12,11 @@
 
 #include <iostream>
 
-void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
-void UserInputCallBack(GLFWwindow* window, float& xRotation, float& yRotation, float& zRotation);
+#include "GLFW/glfw3.h"
+
 
 int main()
 {
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Hello, world!", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
 
     if (!gladLoadGL((GLADloadfunc)glfwGetProcAddress))
     {
@@ -97,7 +83,7 @@ int main()
     int fbHeight{};
     glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
     glViewport(0, 0, fbWidth, fbHeight);
-    glfwSetFramebufferSizeCallback(window, FrameBufferSizeCallback);
+
 
     unsigned int
         texture1{},
@@ -328,63 +314,17 @@ int main()
         bool 
             changeArrayBuffer{};
 
-        UserInputCallBack(window, xRotation, yRotation, zRotation);
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram1);
 
-    glfwDestroyWindow(window);
+
     glfwTerminate();
 
     return 0;
 }
 
 
-void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-    //std::cout << "BUFFER RESIZED WITH: " << width << " " << height << std::endl;
-
-}
-
-void UserInputCallBack(GLFWwindow* window, float& xRotation, float& yRotation, float& zRotation)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, 1);
-    }
-    
-
-    float rotScale{1.f};
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        xRotation += rotScale;
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        xRotation -= rotScale;
-    }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        zRotation += rotScale;
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        zRotation -= rotScale;
-    }
-    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-    {
-        yRotation += rotScale;
-    }
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-    {
-        yRotation -= rotScale;
-    }
-
-}
 
