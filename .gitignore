@@ -17,3 +17,6 @@ compile_commands.json
 *.dylib
 *.exe
 *.out
+
+#some other shit
+.idea
